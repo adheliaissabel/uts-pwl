@@ -1,12 +1,11 @@
-import { render } from "../config/viewEngine";
-import * as model from "../models/mahasiswaModel";
+import { render } from "../config/viewEngine.js";
+import * as model from "../models/mahasiswaModel.js";
 
 // LIST
 export const index = async (c) => {
-  const data = model.getAll();
+  const data = await model.getAll(); // tambah await
   const success = c.req.query("success");
   const error = c.req.query("error");
-
   return c.html(
     await render("mahasiswa/index", {
       title: "Data Mahasiswa",
@@ -29,25 +28,17 @@ export const createForm = async (c) => {
 // STORE
 export const store = async (c) => {
   const body = await c.req.parseBody();
-
-  // VALIDASI
   if (!body.nama || !body.nim) {
     return c.redirect("/mahasiswa/create?error=Semua field wajib diisi");
   }
-
-  model.create({
-    nama: body.nama,
-    nim: body.nim,
-  });
-
+  await model.create({ nama: body.nama, nim: body.nim }); // tambah await
   return c.redirect("/mahasiswa?success=Data berhasil ditambahkan");
 };
 
 // FORM EDIT
 export const editForm = async (c) => {
   const id = c.req.param("id");
-  const data = model.getById(id);
-
+  const data = await model.getById(id); // tambah await
   return c.html(
     await render("mahasiswa/edit", {
       title: "Edit Mahasiswa",
@@ -60,22 +51,16 @@ export const editForm = async (c) => {
 export const updateData = async (c) => {
   const id = c.req.param("id");
   const body = await c.req.parseBody();
-
   if (!body.nama || !body.nim) {
     return c.redirect(`/mahasiswa/edit/${id}?error=Field tidak boleh kosong`);
   }
-
-  model.update(id, {
-    nama: body.nama,
-    nim: body.nim,
-  });
-
+  await model.update(id, { nama: body.nama, nim: body.nim }); // tambah await
   return c.redirect("/mahasiswa?success=Data berhasil diupdate");
 };
 
 // DELETE
 export const destroy = async (c) => {
   const id = c.req.param("id");
-  model.remove(id);
+  await model.remove(id); // tambah await
   return c.redirect("/mahasiswa?success=Data berhasil dihapus");
 };

@@ -1,18 +1,18 @@
 import { render } from "../config/viewEngine";
-import { PrismaClient } from "@prisma/client"; // Tambahkan ini
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient(); // Inisialisasi Prisma
+const prisma = new PrismaClient();
 
 export const home = async (c) => {
-  // 1. Ambil jumlah total mahasiswa dari database MySQL
   const totalMhs = await prisma.mahasiswa.count();
+  const mahasiswa = await prisma.mahasiswa.findMany();
 
-  // 2. Kirim totalMhs ke dalam file EJS
   const html = await render("home", {
     title: "Dashboard Bun MVC",
     message: "Hello dari Bun + Tailwind 🚀",
-    totalMhs: totalMhs, // Pastikan nama variabel sesuai dengan di EJS
-  }, c); // Tambahkan 'c' di sini jika viewEngine memerlukannya
+    totalMhs: totalMhs,
+    mahasiswa: mahasiswa,
+  }, c);
 
   return c.html(html);
 };
